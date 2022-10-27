@@ -1,17 +1,20 @@
-using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
+
+Scenario 1,3:
+
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.DevTools.V104.DOM;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using SeleniumExtras.WaitHelpers;
+using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
 
 namespace Day_2_Practice
 {
     [TestFixture]
-    public class SimpleTests
+    public class SimpleTest
     {
         protected WebDriverWait? _wait;
         protected IWebDriver _driver;
@@ -25,14 +28,14 @@ namespace Day_2_Practice
         }
 
         [Test]
-        public void Test1()
+        public void TestScenario1()
         {
             //Open website “http://automationpractice.com/index.php”
             _driver.Navigate().GoToUrl("http://automationpractice.com/index.php");
             Thread.Sleep(3000);
 
             //Print a Message to display that the website is opened successfully
-            Console.WriteLine("Website is opened successfully!");
+            Console.WriteLine("The Website is opened successfully!");
 
             //Click to “Contact Us” link on top menu to open Contact us page
             IWebElement searchResult = _driver.FindElement(By.XPath("//*[@title = 'Contact Us']"));
@@ -46,7 +49,7 @@ namespace Day_2_Practice
             if (expectedTitle1.Equals("CUSTOMER SERVICE - CONTACT US"))
             {
                 Console.WriteLine("Title of the form is correct!");
-            }    
+            }
             else
             {
                 Console.WriteLine("Title of the form is incorrect!");
@@ -73,7 +76,44 @@ namespace Day_2_Practice
 
             //Close the Browser
             _driver.Close();
-            _driver.Quit();;
+        }
+
+        public void Click(By by)
+        {
+            //Write wait methods using explicit wait method to wait:
+            // Wait for an element is displayed
+            IWebElement a = _driver.FindElement(by);
+            _wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(by));
+            a.Click();
+
+            //Wait for an element is clickable
+            IWebElement b = _driver.FindElement(by);
+            _wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(by));
+            b.Click();
+
+            //Wait for an element is selected
+            IWebElement c = _driver.FindElement(by);
+            _wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeSelected(by));
+            c.Click();
         }
     }
 }
+
+
+Scenario 2:
+
+Implicit Wait	
+- Implicit Wait time is applied to all the elements in the script
+- In Implicit Wait, we need not specify “ExpectedConditions” on the element to be located
+- It is recommended to use when the elements are located with the time frame specified in Selenium implicit wait
+- Implicit Wait syntax:
+  driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(time_in_seconds);
+
+
+Explicit Wait
+- Explicit Wait time is applied only to those elements which are intended by us
+- In Explicit Wait, we need to specify “ExpectedConditions” on the element to be located
+- It is recommended to use when the elements are taking long time to load and also for verifying the property of the element like(visibilityOfElementLocated, elementToBeClickable,elementToBeSelected)
+- Explicit Wait syntax:
+  WebDriverWait wait = WebDriverWait(driver, TimeSpan.FromSeconds(time_in_seconds));
+

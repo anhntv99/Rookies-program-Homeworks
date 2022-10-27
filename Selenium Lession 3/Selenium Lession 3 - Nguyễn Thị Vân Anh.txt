@@ -1,0 +1,83 @@
+﻿using NUnit.Framework;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Support.UI;
+using Assert = NUnit.Framework.Assert;
+using System.Collections.Generic;
+using System.Threading;
+using SeleniumExtras.WaitHelpers;
+using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
+
+
+//‒ Create a Project using Selenium (C#) and Nunit
+//‒ Convert Project to Page Object Design with following steps:
+//1.Going to Google Search home page
+//2. Input any text to search
+//3. Reach to result screen, verify Title of this screen is matching with text in step 2
+//4. Click on 1st result, verify any text in this screen namespace NunitPractice
+
+namespace SeleDay3
+{
+    [TestFixture]
+    public class SimpleTest
+    {
+        protected WebDriverWait? _wait;
+        protected IWebDriver _driver;
+        protected string GOOGLE_URL = "https://www.google.com/";
+        protected string keyword = "Google";
+        private By searchBox = By.XPath("//*[@title ='Tìm kiếm']");
+        private By firstResult = By.XPath("//*[text() ='Tin bài hàng đầu']");
+
+        // Find and click element
+        public IWebElement ReturnWebElement(By by)
+        {
+            IWebElement e = _driver.FindElement(by);
+            _wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(by));
+            return e;
+        }
+
+        [SetUp]
+        public void Setup()
+        {
+            //Launch the Chrome browser
+            _driver = new ChromeDriver(AppDomain.CurrentDomain.BaseDirectory);
+            _wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
+        }
+        //1.Going to Google Search home page
+        //2. Input any text to search
+        public void GotoHomePage()
+        {
+            _driver.Navigate().GoToUrl(GOOGLE_URL);
+        }
+        public void EnterSearch()
+        {
+            IWebElement GetSearchBox = ReturnWebElement(searchBox);
+            GetSearchBox.Clear();
+            GetSearchBox.SendKeys(keyword);
+            GetSearchBox.SendKeys(Keys.Enter);
+            
+        }
+        [Test]
+        public void Test1()
+        {
+            //3. Reach to result screen, verify Title of this screen is matching with text in step 2
+            GotoHomePage();
+            string pageTitle = _driver.Title;
+            Assert.That(pageTitle, Is.EqualTo(keyword));
+        }
+        [Test]
+        public void Test2()
+        {
+            //4. Click on 1st result, verify any text in this screen
+            GotoHomePage();
+            EnterSearch();
+            IWebElement getFirstResult = ReturnWebElement(firstResult);
+            Assert.That(getFirstResult.Text, Is.EqualTo("Tin bài hàng đầu"));
+        }
+        [TearDown]
+        public void CleanUp()
+        {
+            _driver.Close();
+        }
+    }
+}
