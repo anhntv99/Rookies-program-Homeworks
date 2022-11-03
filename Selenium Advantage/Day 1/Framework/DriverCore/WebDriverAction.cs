@@ -6,6 +6,9 @@ using OpenQA.Selenium.Safari;
 using System.Drawing;
 using System.Drawing.Design;
 using OpenQA.Selenium.Support.Events;
+using OpenQA.Selenium.Support.UI;
+using static System.Net.Mime.MediaTypeNames;
+using System.Xml.Linq;
 
 namespace Framework.DriverCore
 {
@@ -42,13 +45,14 @@ namespace Framework.DriverCore
         {
             try
             {
+                highlightElement(e);
                 e.Click();
-                TestContext.WriteLine("Click into emlement" + e.ToString() + "passed");
+                TestContext.WriteLine("Click into emlement " + e.ToString() + " passed");
 
             }
             catch (Exception ex)
             {
-                TestContext.WriteLine("Click into emlement" + e.ToString() + "failed");
+                TestContext.WriteLine("Click into emlement " + e.ToString() + " failed");
                 throw ex;
             }
         }
@@ -58,12 +62,12 @@ namespace Framework.DriverCore
             try
             {
                 FindEdlementByXpath(locator).Click();
-                TestContext.WriteLine("Click into emlement" + locator + "passed");
+                TestContext.WriteLine("Click into emlement " + locator + " passed");
 
             }
             catch (Exception ex)
             {
-                TestContext.WriteLine("Click into emlement" + locator + "failed");
+                TestContext.WriteLine("Click into emlement " + locator + " failed");
                 throw ex;
             }
         }
@@ -73,16 +77,17 @@ namespace Framework.DriverCore
             try
             {
                 FindEdlementByXpath(locator).SendKeys(key);
-                TestContext.WriteLine("SendKeys into emlement" + locator + "passed");
+                TestContext.WriteLine("SendKeys into emlement " + locator + " passed");
 
             }
             catch (Exception ex)
             {
-                TestContext.WriteLine("Click into emlement" + locator + "failed");
+                TestContext.WriteLine("Click into emlement " + locator + " failed");
                 throw ex;
             }
         }
 
+        // action Take Screenshot
         public void ScreenShot()
         {
             try
@@ -94,21 +99,25 @@ namespace Framework.DriverCore
             }
             catch (Exception ex)
             {
-                TestContext.WriteLine("Take screenshot successfully!");
+                TestContext.WriteLine("Take screenshot failed!");
                 throw ex;
             }
+        }
 
-            }
-
-        public void Clear()
+        // action Get text element
+        public string GetTextElement(string locator)
         {
             try
             {
-               
+                IWebElement e = FindEdlementByXpath(locator);
+                string text = e.Text;
+                return text;
+                TestContext.WriteLine("Get Text Element " + locator + " successfully");
             }
             catch (Exception ex)
             {
-                
+                TestContext.WriteLine("Get Text Element " + locator + " failed");
+                throw ex;
             }
         }
 

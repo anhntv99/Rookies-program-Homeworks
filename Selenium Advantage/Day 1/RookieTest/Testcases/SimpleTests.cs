@@ -25,6 +25,13 @@ namespace RookieTest
             ss.ScreenShot();
         }
 
+        [Test]
+        public void VerifyTitleOfEmement()
+        {
+            WebDriverAction text = new WebDriverAction(_driver);
+            string title = text.GetTextElement("//a[@href=\"http://demo.guru99.com/test/newtours/\"]");
+        }
+
     }
 
 }
