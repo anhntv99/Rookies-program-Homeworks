@@ -28,6 +28,12 @@ and last name of all employees who work in a department with any employee whose 
 select employee_id, last_name from employees
 where department_id in (select department_id from employees where last_name like '%u%')
 
+--Cách 2:
+select distinct e1.employee_id, e1.last_name from employees e1
+inner join employees e2
+on e1.department_id = e2.department_id
+where e2 . last_name like '%u%'
+
 
 /* 4. The HR department needs a report 
 that displays the last name, department number, and job ID of all employees whose department location ID is 1700*/
@@ -67,6 +73,11 @@ where location_id = 1700
 select last_name, salary from employees
 where manager_id in (select employee_id from employees where last_name = 'King')
 
+--Cách 2:
+select e1.last_name, e1.salary from employees e1
+join employees e2 on e1.manager_id = e2.employee_id
+where e2.last_name = 'King'
+
 
 /* 6. Create a report for HR that displays the department number, last name, and job ID for every employee in the Executive department*/
 
@@ -75,6 +86,10 @@ inner join departments d
 on e.department_id = d. department_id
 where department_name = 'Executive'
 
+--Cách 2: 
+select department_id, last_name, job_id from employees
+where department_id in (select department_id from departments where department_name = 'Executive')
+
 /* 7. Create query to display the employee number, last name, and salary of all the employees who 
 earn more than the average salary and who work in a department with any employee whose last name contains a letter “u”*/
 
@@ -82,14 +97,25 @@ select employee_id, last_name, salary from employees
 where salary > (select avg(salary) from employees)
 union
 select employee_id, last_name, salary from employees
-where department_id in (select department_id from employees where last_name like '%u%')
+where department_id in (select department_id from employees where last_name like '%u%' and last_name not like '%u%u%')
+
+--Cách 2:
+select employee_id, last_name, salary from employees
+where salary > (select avg(salary) from employees) 
+or  department_id in (select department_id from employees where last_name like '%u%' and last_name not like '%u%u%')
 
  
 /* 8. Find the highest, lowest, sum, and average salary of all employees. 
 Label the columns as Maximum, Minimum, Sum, and Average, respectively.
 Round your results to the nearest whole number*/
 
-select max(salary) as highest_salary, min(salary) as lowest_salary, sum(salary) as sum_salary, round(avg(salary),0) as average_salary
+select max(salary) as Maximum, min(salary) as Minimum, sum(salary) as Sum, round(avg(salary),0) as Average
+from employees
+
+select cast(max(salary) as numeric(10,0)) as Maximum,
+cast(min(salary) as numeric(10,0)) as Minimum,
+cast(sum(salary) as numeric(10,0)) as Sum,
+cast(avg(salary) as numeric(10,0)) as Average
 from employees
 
 /* 9. Write a query that displays the last name (with the first letter in uppercase and all the other letters in lowercase)
@@ -98,15 +124,19 @@ Give each column an appropriate label. Sort the results by the employees’ last n
 
 select upper(left(last_name,1)) + lower(right(last_name,len(last_name)-1)) as employee_name, len(last_name) as length_of_name 
 from employees
-where last_name like 'J%'
-or last_name like 'A%' 
-or last_name like 'M%'
+where upper(left(last_name,1)) in ('J', 'A', 'M')
+order by last_name asc
+
+--Cách 2:
+select upper(substring(last_name,1,1)) + lower(substring(last_name,2,len(last_name))) as employee_name, len(last_name) as length_of_name 
+from employees
+where upper(substring(last_name,1,1)) in ('J', 'A', 'M')
 order by last_name asc
 
 /* 10. The HR department needs a report to display the employee number, last name, salary, 
 and salary increased by 15.5% (expressed as a whole number) for each employee. Label the column New Salary*/
 
-select employee_id, last_name, salary, round(salary * 1.155, 0) as new_salary from employees
+select employee_id, last_name, salary, cast(salary * 1.155 as numeric(10,0)) as new_salary from employees
 
 /* 11.The HR department needs a report with the following specifications:
 •	Last name and department ID of all employees from the employees table, regardless of whether or not they belong to a department
