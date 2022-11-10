@@ -22,8 +22,7 @@ namespace SeleDay3
             homePage.Search("NUnit");
 
             // Reach to result screen, verify Title of this screen is matching with text in step 2
-            WebDriverAction getTitle = new WebDriverAction(_driver);
-            getTitle.VerifyTitleOfPage("NUnit - Tìm trên Google");
+            homePage.VerifyTitleOfResultPage("NUnit - Tìm trên Google");
 
             // Click on 1st result, verify any text in this screen
             homePage.ClickFirstResultScreen();

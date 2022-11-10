@@ -31,5 +31,10 @@ namespace SeleFay3.PageObject
         {
             VerifyTitleOfElement(locator, key);
         }
+
+        public void VerifyTitleOfResultPage(string key)
+        {
+            VerifyTitleOfPage(key);
+        }
     }
 }
